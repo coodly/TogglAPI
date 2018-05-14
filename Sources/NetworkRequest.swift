@@ -27,6 +27,8 @@ public enum TogglError: Error {
     case noData
     case network(Error)
     case server(String)
+    case invalidCredentials
+    case invalidJSON
     case unknown
 }
 
@@ -48,10 +50,27 @@ private let ServerAPIURLString = "https://www.toggl.com/api/v8"
 
 private typealias Dependencies = FetchConsumer
 
-internal class NetworkRequest<Model: Codable>: Dependencies {
+internal class NetworkRequest<Model: Codable, Result>: Dependencies {
     var fetch: NetworkFetch!
     var apiKey: String!
     var accessToken: String!
+    
+    internal var result: Result? {
+        didSet {
+            guard let value = result else {
+                return
+            }
+            
+            resultHandler?(value)
+        }
+    }
+    internal var resultHandler: ((Result) -> Void)?
+    
+    private lazy var decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return decoder
+    }()
     
     final func execute() {
         performRequest()
@@ -125,20 +144,31 @@ internal class NetworkRequest<Model: Codable>: Dependencies {
             }
             
             var value: Model?
-            var error: TogglError?
+            var togglError: TogglError?
             
             defer {
-                self.handle(result: NetworkResult(value: value, statusCode: statusCode, error: error))
+                self.handle(result: NetworkResult(value: value, statusCode: statusCode, error: togglError))
             }
             
             if let remoteError = networkError  {
-                error = .network(remoteError)
+                togglError = .network(remoteError)
+                return
+            }
+            
+            if statusCode == 403 {
+                togglError = .invalidCredentials
                 return
             }
             
             guard let data = data else {
-                error = .noData
+                togglError = .noData
                 return
+            }
+            
+            do {
+                value = try self.decoder.decode(Model.self, from: data)
+            } catch {
+                togglError = .invalidJSON
             }
         }
     }

@@ -20,9 +20,10 @@ public class Toggl {
         self.fetch = fetch
     }
     
-    public func passwordAuthentication(_ username: String, password: String) {
+    public func passwordAuthentication(_ username: String, password: String, completion: @escaping ((LoginResult) -> Void)) {
         let request = MyDetailsRequest(username: username, password: password)
         inject(into: request)
+        request.resultHandler = completion
         request.execute()
     }
     

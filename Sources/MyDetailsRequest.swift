@@ -17,12 +17,17 @@
 import Foundation
 
 internal struct MyDetailsResponse: Codable {
-    
+    let data: MyDetails
 }
 
 private let MyDetailsPath = "/me"
 
-internal class MyDetailsRequest: NetworkRequest<MyDetailsResponse> {
+public enum LoginResult {
+    case success(MyDetails)
+    case failure(TogglError)
+}
+
+internal class MyDetailsRequest: NetworkRequest<MyDetailsResponse, LoginResult> {
     private let username: String
     private let password: String
     internal init(username: String, password: String) {
@@ -32,6 +37,14 @@ internal class MyDetailsRequest: NetworkRequest<MyDetailsResponse> {
     
     override func performRequest() {
         GET(MyDetailsPath)
+    }
+    
+    override func handle(result: NetworkResult<MyDetailsResponse>) {
+        if let details = result.value?.data {
+            self.result = .success(details)
+        } else {
+            self.result = .failure(result.error ?? .unknown)
+        }
     }
     
     override func credentials() -> String {
