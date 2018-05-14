@@ -14,21 +14,8 @@
  * limitations under the License.
  */
 
-public class Toggl {
-    private let fetch: NetworkFetch
-    public init(fetch: NetworkFetch) {
-        self.fetch = fetch
-    }
+import Foundation
+
+public class Authenticator {
     
-    public func passwordAuthentication(_ username: String, password: String) {
-        let request = MyDetailsRequest(username: username, password: password)
-        inject(into: request)
-        request.execute()
-    }
-    
-    private func inject(into object: AnyObject) {
-        if var consumer = object as? FetchConsumer {
-            consumer.fetch = fetch
-        }
-    }
 }

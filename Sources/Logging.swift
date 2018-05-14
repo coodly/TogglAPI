@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Coodly LLC
+ * Copyright 2018 Coodly LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-public class Toggl {
-    private let fetch: NetworkFetch
-    public init(fetch: NetworkFetch) {
-        self.fetch = fetch
+import Foundation
+
+public protocol Logger {
+    func log<T>(_ object: T, file: String, function: String, line: Int)
+}
+
+public class Logging {
+    private var logger: Logger?
+    private static let sharedInstance = Logging()
+    
+    public class func set(logger: Logger) {
+        sharedInstance.logger = logger
     }
     
-    public func passwordAuthentication(_ username: String, password: String) {
-        let request = MyDetailsRequest(username: username, password: password)
-        inject(into: request)
-        request.execute()
-    }
-    
-    private func inject(into object: AnyObject) {
-        if var consumer = object as? FetchConsumer {
-            consumer.fetch = fetch
-        }
+    internal class func log<T>(_ object: T, file: String = #file, function: String = #function, line: Int = #line) {
+        sharedInstance.logger?.log(object, file: file, function: function, line: line)
     }
 }

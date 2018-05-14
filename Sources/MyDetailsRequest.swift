@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-public class Toggl {
-    private let fetch: NetworkFetch
-    public init(fetch: NetworkFetch) {
-        self.fetch = fetch
+import Foundation
+
+internal struct MyDetailsResponse: Codable {
+    
+}
+
+private let MyDetailsPath = "/me"
+
+internal class MyDetailsRequest: NetworkRequest<MyDetailsResponse> {
+    private let username: String
+    private let password: String
+    internal init(username: String, password: String) {
+        self.username = username
+        self.password = password
     }
     
-    public func passwordAuthentication(_ username: String, password: String) {
-        let request = MyDetailsRequest(username: username, password: password)
-        inject(into: request)
-        request.execute()
+    override func performRequest() {
+        GET(MyDetailsPath)
     }
     
-    private func inject(into object: AnyObject) {
-        if var consumer = object as? FetchConsumer {
-            consumer.fetch = fetch
-        }
+    override func credentials() -> String {
+        return "\(username):\(password)"
     }
 }
