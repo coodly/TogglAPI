@@ -48,12 +48,14 @@ private extension DateFormatter {
 
 private let ServerAPIURLString = "https://www.toggl.com/api/v8"
 
-private typealias Dependencies = FetchConsumer
+private typealias Dependencies = FetchConsumer & TokenConsumer
 
 internal class NetworkRequest<Model: Codable, Result>: Dependencies {
     var fetch: NetworkFetch!
     var apiKey: String!
     var accessToken: String!
+    
+    var tokenStore: TokenStore!
     
     internal var result: Result? {
         didSet {

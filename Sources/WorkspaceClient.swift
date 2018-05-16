@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Coodly LLC
+ * Copyright 2018 Coodly LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-public class Toggl: Injector {
-    public init(fetch: NetworkFetch, tokenStore: TokenStore) {
-        Injection.sharedInstance.fetch = fetch
-        Injection.sharedInstance.tokenStore = tokenStore
+import Foundation
+
+public class WorkspaceClient: Injector {
+    private let workspaceId: Int
+    internal init(workspaceId: Int) {
+        self.workspaceId = workspaceId
     }
     
-    public func passwordAuthentication(_ username: String, password: String, completion: @escaping ((LoginResult) -> Void)) {
-        let request = MyDetailsRequest(username: username, password: password)
+    public func listProjects(completion: @escaping ((ListProjectsResult) -> Void)) {
+        let request = ListProjectsRequest(workspaceId: workspaceId)
         inject(into: request)
         request.resultHandler = completion
         request.execute()
-    }
-    
-    public func clientFor(workspaceId: Int) -> WorkspaceClient {
-        return WorkspaceClient(workspaceId: workspaceId)
     }
 }

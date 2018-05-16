@@ -16,6 +16,8 @@
 
 import Foundation
 
-internal protocol FetchConsumer {
-    var fetch: NetworkFetch! { get set }
+public struct Project: Codable {
+    public let id: Int
+    public let name: String
+    public let hexColor: String
 }
