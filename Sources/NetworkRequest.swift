@@ -38,6 +38,10 @@ internal struct NetworkResult<T: Codable> {
     let error: TogglError?
 }
 
+public enum ParameterValue {
+    case string(String)
+}
+
 private extension DateFormatter {
     static let paramDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -78,7 +82,7 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
         performRequest()
     }
     
-    func GET(_ path: String, params: [String: AnyObject]? = nil) {
+    func GET(_ path: String, params: [String: ParameterValue]? = nil) {
         executeMethod(.GET, path: path, body: nil, params: params)
     }
     
@@ -94,22 +98,19 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
         executeMethod(.DELETE, path: path, body: nil)
     }
     
-    internal func executeMethod(_ method: Method, path: String, body: [String: AnyObject]?, params: [String: AnyObject]? = nil) {
+    internal func executeMethod(_ method: Method, path: String, body: [String: AnyObject]?, params: [String: ParameterValue]? = nil) {
         var components = URLComponents(url: URL(string: ServerAPIURLString)!, resolvingAgainstBaseURL: true)!
         components.path = components.path + path
         
         var queryItems = [URLQueryItem]()
         
         for (key, value) in params ?? [:] {
-            if let number = value as? Int {
-                let used = String(describing: number)
-                queryItems.append(URLQueryItem(name: key, value: used))
-            } else if let date = value as? Date {
-                let dateString = DateFormatter.paramDateFormatter.string(from: date)
-                queryItems.append(URLQueryItem(name: key, value: dateString))
-            } else if let string = value as? String {
-                queryItems.append(URLQueryItem(name: key, value: string))
+            let encoded: String
+            switch value {
+            case .string(let wrapped):
+                encoded = wrapped
             }
+            queryItems.append(URLQueryItem(name: key, value: encoded))
         }
         
         components.queryItems = queryItems

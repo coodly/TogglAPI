@@ -21,17 +21,25 @@ public enum ListProjectsResult {
     case failure(TogglError)
 }
 
+public enum ProjectsIncluded: String {
+    case onlyActive = "true"
+    case onlyArchived = "false"
+    case all = "both"
+}
+
 private let ListProjectsBase = "/workspaces/%@/projects"
 
 internal class ListProjectsRequest: NetworkRequest<[Project], ListProjectsResult> {
     private let workspaceId: Int
-    internal init(workspaceId: Int) {
+    private let including: ProjectsIncluded
+    internal init(workspaceId: Int, including: ProjectsIncluded) {
         self.workspaceId = workspaceId
+        self.including = including
     }
     
     override func performRequest() {
         let path = String(format: ListProjectsBase, NSNumber(value: workspaceId))
-        GET(path)
+        GET(path, params: ["active": .string(including.rawValue)])
     }
     
     override func handle(result: NetworkResult<[Project]>) {
