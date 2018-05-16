@@ -20,4 +20,6 @@ public struct Project: Codable {
     public let id: Int
     public let name: String
     public let hexColor: String
+    public let active: Bool
+    public let createdAt: Date
 }
