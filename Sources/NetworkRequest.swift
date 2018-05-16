@@ -164,6 +164,11 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
                 return
             }
             
+            if statusCode == 200, data == nil {
+                togglError = .noData
+                return
+            }
+            
             guard let data = data else {
                 togglError = .noData
                 return

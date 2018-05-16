@@ -45,6 +45,8 @@ internal class ListProjectsRequest: NetworkRequest<[Project], ListProjectsResult
     override func handle(result: NetworkResult<[Project]>) {
         if let projects = result.value {
             self.result = .success(projects)
+        } else if result.statusCode == 200 {
+            self.result = .success([])
         } else {
             self.result = .failure(result.error ?? .unknown)
         }
