@@ -17,6 +17,7 @@
 import Foundation
 
 public struct MyDetails: Codable {
+    public let id: Int
     public let email: String
     public let apiToken: String
     public let workspaces: [Workspace]
