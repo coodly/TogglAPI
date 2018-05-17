@@ -191,6 +191,10 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
     }
     
     internal func credentials() -> String {
+        return token() + ":api_token"
+    }
+    
+    internal func token() -> String {
         return ""
     }
 }

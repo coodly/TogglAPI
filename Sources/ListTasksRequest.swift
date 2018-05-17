@@ -16,14 +16,14 @@
 
 import Foundation
 
-public enum ListProjectsResult {
-    case success([Project])
+public enum ListTasksResult {
+    case success([Task])
     case failure(TogglError)
 }
 
-private let ListProjectsBase = "/workspaces/%@/projects"
+private let ListTasksBase = "/workspaces/%@/tasks"
 
-internal class ListProjectsRequest: NetworkRequest<[Project], ListProjectsResult> {
+internal class ListTasksRequest: NetworkRequest<[Task], ListTasksResult> {
     private let workspaceId: Int
     private let including: Included
     internal init(workspaceId: Int, including: Included) {
@@ -32,13 +32,13 @@ internal class ListProjectsRequest: NetworkRequest<[Project], ListProjectsResult
     }
     
     override func performRequest() {
-        let path = String(format: ListProjectsBase, NSNumber(value: workspaceId))
+        let path = String(format: ListTasksBase, NSNumber(value: workspaceId))
         GET(path, params: ["active": .string(including.rawValue)])
     }
     
-    override func handle(result: NetworkResult<[Project]>) {
-        if let projects = result.value {
-            self.result = .success(projects)
+    override func handle(result: NetworkResult<[Task]>) {
+        if let tasks = result.value {
+            self.result = .success(tasks)
         } else if result.statusCode == 200 {
             self.result = .success([])
         } else {
