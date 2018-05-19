@@ -40,6 +40,7 @@ internal struct NetworkResult<T: Codable> {
 
 public enum ParameterValue {
     case string(String)
+    case date(Date)
 }
 
 private extension DateFormatter {
@@ -78,6 +79,7 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
         decoder.dateDecodingStrategy = .iso8601
         return decoder
     }()
+    private lazy var dateFormatter = ISO8601DateFormatter()
     
     final func execute() {
         performRequest()
@@ -110,6 +112,8 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
             switch value {
             case .string(let wrapped):
                 encoded = wrapped
+            case .date(let date):
+                encoded = dateFormatter.string(from: date)
             }
             queryItems.append(URLQueryItem(name: key, value: encoded))
         }

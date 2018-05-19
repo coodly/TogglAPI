@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Coodly LLC
+ * Copyright 2018 Coodly LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,19 @@
 
 import Foundation
 
-public protocol TokenStore {
-    func tokenFor(workspace: Int) -> String
-    func tokenFor(user: Int) -> String
+public class EntriesClient: Injector {
+    private let userId: Int
+    internal init(userId: Int) {
+        self.userId = userId
+    }
+    
+    public func loadEntries(in range: DateInterval, completion: @escaping ((ListEntriesResult) -> Void)) {
+        Logging.log("Load entries in \(range)")
+        
+        let request = LoadTimeEntriesRequest(userId: userId, range: range)
+        request.resultHandler = completion
+        inject(into: request)
+        request.execute()
+    }
+
 }

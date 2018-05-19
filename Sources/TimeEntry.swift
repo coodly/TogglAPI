@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Coodly LLC
+ * Copyright 2018 Coodly LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,12 @@
 
 import Foundation
 
-public protocol TokenStore {
-    func tokenFor(workspace: Int) -> String
-    func tokenFor(user: Int) -> String
+public struct TimeEntry: Codable {
+    public let id: Int
+    public let wid: Int
+    public let pid: Int?
+    public let tid: Int?
+    public let start: Date
+    public let end: Date?
+    public let description: String
 }

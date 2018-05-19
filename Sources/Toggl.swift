@@ -30,4 +30,8 @@ public class Toggl: Injector {
     public func clientFor(workspaceId: Int) -> WorkspaceClient {
         return WorkspaceClient(workspaceId: workspaceId)
     }
+    
+    public func entriesClient(userId: Int) -> EntriesClient {
+        return EntriesClient(userId: userId)
+    }
 }
