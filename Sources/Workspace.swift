@@ -19,5 +19,6 @@ import Foundation
 public struct Workspace: Codable {
     public let id: Int
     public let name: String
+    public let admin: Bool
 }
 

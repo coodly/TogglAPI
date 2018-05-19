@@ -22,6 +22,13 @@ public class WorkspaceClient: Injector {
         self.workspaceId = workspaceId
     }
     
+    public func load(completion: @escaping ((WorkspaceDetailsResult) -> Void)) {
+        let request = WorkspaceDetailsRequest(workspaceId: workspaceId)
+        inject(into: request)
+        request.resultHandler = completion
+        request.execute()
+    }
+        
     public func listProjects(including: Included = .onlyActive, completion: @escaping ((ListProjectsResult) -> Void)) {
         let request = ListProjectsRequest(workspaceId: workspaceId, including: including)
         inject(into: request)
