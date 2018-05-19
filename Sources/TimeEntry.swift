@@ -22,6 +22,6 @@ public struct TimeEntry: Codable {
     public let pid: Int?
     public let tid: Int?
     public let start: Date
-    public let end: Date?
+    public let stop: Date?
     public let description: String
 }
