@@ -49,4 +49,11 @@ public class WorkspaceClient: Injector {
         request.resultHandler = completion
         request.execute()
     }
+    
+    public func deleteProject(_ projectId: Int, completion: @escaping ((DeleteProjectResult) -> Void)) {
+        let request = DeleteProjectRequest(workspaceId: workspaceId, projectId: projectId)
+        inject(into: request)
+        request.resultHandler = completion
+        request.execute()
+    }
 }
