@@ -21,5 +21,6 @@ public struct Project: Codable {
     public let name: String
     public let hexColor: String
     public let active: Bool
-    public let createdAt: Date
+    public let createdAt: Date?
+    public let at: Date
 }

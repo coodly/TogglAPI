@@ -79,6 +79,12 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
         decoder.dateDecodingStrategy = .iso8601
         return decoder
     }()
+    private lazy var encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        encoder.dateEncodingStrategy = .iso8601
+        return encoder
+    }()
     private lazy var dateFormatter = ISO8601DateFormatter()
     
     final func execute() {
@@ -89,19 +95,36 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
         executeMethod(.GET, path: path, body: nil, params: params)
     }
     
-    func POST(_ path: String, body: [String: AnyObject]) {
-        executeMethod(.POST, path: path, body: body)
+    func POST<Body: Encodable>(_ path: String, body: Body) {
+        executeWithBody(.POST, path: path, body: body)
     }
     
-    func PUT(_ path: String, body: [String: AnyObject]) {
-        executeMethod(.PUT, path: path, body: body)
+    func PUT<Body: Encodable>(_ path: String, body: Body) {
+        executeWithBody(.PUT, path: path, body: body)
     }
     
     func DELETE(_ path: String) {
         executeMethod(.DELETE, path: path, body: nil)
     }
     
-    internal func executeMethod(_ method: Method, path: String, body: [String: AnyObject]?, params: [String: ParameterValue]? = nil) {
+    private func executeWithBody<Body: Encodable>(_ method: Method, path: String, body: Body?, params: [String: ParameterValue]? = nil) {
+        var dataSent: Data? = nil
+        defer {
+            executeMethod(method, path: path, body: dataSent, params: params)
+        }
+        
+        guard let sentBody = body else {
+            return
+        }
+        
+        do {
+            dataSent = try encoder.encode(sentBody)
+        } catch {
+            Logging.log("Encode error: \(error)")
+        }
+    }
+    
+    internal func executeMethod(_ method: Method, path: String, body: Data?, params: [String: ParameterValue]? = nil) {
         var components = URLComponents(url: URL(string: ServerAPIURLString)!, resolvingAgainstBaseURL: true)!
         components.path = components.path + path
         
@@ -134,12 +157,14 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
         
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         
-        /*if let string = body?.generate(), let data = string.data(using: .utf8) {
-            request.httpBody = data
-            request.addValue("application/xml", forHTTPHeaderField: "Content-Type")
-            
-            Logging.log("Body\n\(string)")
-        }*/
+        if let jsonData = body {
+            request.httpBody = jsonData
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+            if let string = String(data: jsonData, encoding: .utf8) {
+                Logging.log("Body\n\(string)")
+            }
+        }
         
         fetch.fetch(request: request as URLRequest) {
             data, response, networkError in
@@ -202,4 +227,3 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
         return ""
     }
 }
-
