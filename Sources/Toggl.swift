@@ -31,7 +31,7 @@ public class Toggl: Injector {
         return WorkspaceClient(workspaceId: workspaceId)
     }
     
-    public func entriesClient(userId: Int) -> EntriesClient {
-        return EntriesClient(userId: userId)
+    public func entriesClient(userId: Int) -> TimeEntriesClient {
+        return TimeEntriesClient(userId: userId)
     }
 }

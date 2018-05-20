@@ -16,7 +16,7 @@
 
 import Foundation
 
-public class EntriesClient: Injector {
+public class TimeEntriesClient: Injector {
     private let userId: Int
     internal init(userId: Int) {
         self.userId = userId
