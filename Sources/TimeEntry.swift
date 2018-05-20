@@ -23,6 +23,6 @@ public struct TimeEntry: Codable {
     public let tid: Int?
     public let start: Date
     public let stop: Date?
-    public let description: String
+    public let description: String?
     public let at: Date
 }

@@ -51,6 +51,10 @@ private extension DateFormatter {
     }()
 }
 
+internal struct EmptyBody: Encodable {
+    
+}
+
 private let ServerAPIURLString = "https://www.toggl.com/api/v8"
 
 private typealias Dependencies = FetchConsumer & TokenConsumer
@@ -99,7 +103,7 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
         executeWithBody(.POST, path: path, body: body)
     }
     
-    func PUT<Body: Encodable>(_ path: String, body: Body) {
+    func PUT<Body: Encodable>(_ path: String, body: Body? = nil) {
         executeWithBody(.PUT, path: path, body: body)
     }
     
@@ -114,6 +118,10 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
         }
         
         guard let sentBody = body else {
+            return
+        }
+        
+        if sentBody is EmptyBody {
             return
         }
         

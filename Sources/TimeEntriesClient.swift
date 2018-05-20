@@ -30,5 +30,32 @@ public class TimeEntriesClient: Injector {
         inject(into: request)
         request.execute()
     }
+    
+    public func start(entry: TimeEntrySendDetails, completion: @escaping ((TimeEntryDetailsResult) -> Void)) {
+        let request = StartTimeEntryRequest(details: entry)
+        inject(into: request)
+        request.resultHandler = completion
+        request.execute()
+    }
+    
+    public func update(entry: TimeEntrySendDetails, id entryId: Int, completion: @escaping ((TimeEntryDetailsResult) -> Void)) {
+        let request = UpdateTimeEntryRequest(id: entryId, details: entry)
+        inject(into: request)
+        request.resultHandler = completion
+        request.execute()
+    }
 
+    public func stop(entry entryId: Int, completion: @escaping ((TimeEntryDetailsResult) -> Void)) {
+        let request = StopTimeEntryRequest(id: entryId, userId: userId)
+        inject(into: request)
+        request.resultHandler = completion
+        request.execute()
+    }
+    
+    public func delete(entry entryId: Int, completion: @escaping ((DeleteTimeEntryResult) -> Void)) {
+        let request = DeleteTimeEntryRequest(userId: userId, entryId: entryId)
+        inject(into: request)
+        request.resultHandler = completion
+        request.execute()
+    }
 }
