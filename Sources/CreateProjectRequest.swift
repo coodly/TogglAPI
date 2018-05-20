@@ -32,7 +32,7 @@ internal class CreateProjectRequest: NetworkRequest<CreateProjectResponse, Creat
     }
     
     override func performRequest() {
-        let projectData = ProjectData(name: name, wid: workspaceId)
+        let projectData = ProjectCreateData(name: name, wid: workspaceId)
         let body = CreateProjectBody(project: projectData)
         
         POST(CreateProjectPath, body: body)
@@ -52,10 +52,10 @@ internal class CreateProjectRequest: NetworkRequest<CreateProjectResponse, Creat
 }
 
 private struct CreateProjectBody: Encodable {
-    let project: ProjectData
+    let project: ProjectCreateData
 }
 
-private struct ProjectData: Encodable {
+private struct ProjectCreateData: Encodable {
     let name: String
     let wid: Int
 }
