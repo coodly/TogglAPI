@@ -58,4 +58,11 @@ public class TimeEntriesClient: Injector {
         request.resultHandler = completion
         request.execute()
     }
+    
+    public func create(entry: TimeEntrySendDetails, completion: @escaping ((TimeEntryDetailsResult) -> Void)) {
+        let request = CreateTimeEntryRequest(details: entry)
+        inject(into: request)
+        request.resultHandler = completion
+        request.execute()
+    }
 }

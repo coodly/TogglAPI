@@ -16,14 +16,9 @@
 
 import Foundation
 
-public enum TimeEntryDetailsResult {
-    case success(TimeEntry)
-    case failure(TogglError)
-}
+private let  CreateTimeEntryPath = "/time_entries"
 
-private let StartEntryPath = "/time_entries/start"
-
-internal class StartTimeEntryRequest: NetworkRequest<TimeEntryDetailsResponse, TimeEntryDetailsResult> {
+internal class CreateTimeEntryRequest: NetworkRequest<TimeEntryDetailsResponse, TimeEntryDetailsResult> {
     private let details: TimeEntrySendDetails
     internal init(details: TimeEntrySendDetails) {
         self.details = details
@@ -31,7 +26,7 @@ internal class StartTimeEntryRequest: NetworkRequest<TimeEntryDetailsResponse, T
     
     override func performRequest() {
         let body = TimeEntrySendBody(timeEntry: details)
-        POST(StartEntryPath, body: body)
+        POST(CreateTimeEntryPath, body: body)
     }
     
     override func handle(result: NetworkResult<TimeEntryDetailsResponse>) {
@@ -45,8 +40,4 @@ internal class StartTimeEntryRequest: NetworkRequest<TimeEntryDetailsResponse, T
     override func token() -> String {
         return tokenStore.tokenFor(workspace: details.wid)
     }
-}
-
-internal struct TimeEntryDetailsResponse: Codable {
-    let data: TimeEntry
 }
