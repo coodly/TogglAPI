@@ -26,11 +26,19 @@ public struct TimeEntrySendDetails: Encodable {
     public let tid: Int?
     public let description: String?
     public let start: Date
+    public let stop: Date?
+    public let duration: Int?
     public let createdWith: String
 }
 
 public extension TimeEntrySendDetails {
-    public static func details(wid: Int, pid: Int?, tid: Int?, description: String?, start: Date, createdWith: String) -> TimeEntrySendDetails {
-        return TimeEntrySendDetails(wid: wid, pid: pid, tid: tid, description: description, start: start, createdWith: createdWith)
+    public static func details(wid: Int, pid: Int?, tid: Int?, description: String?, start: Date, stop: Date?, createdWith: String) -> TimeEntrySendDetails {
+        let duration: Int?
+        if let end = stop {
+            duration = Int(end.timeIntervalSince(start))
+        } else {
+            duration = nil
+        }
+        return TimeEntrySendDetails(wid: wid, pid: pid, tid: tid, description: description, start: start, stop: stop, duration: duration, createdWith: createdWith)
     }
 }
