@@ -65,4 +65,11 @@ public class TimeEntriesClient: Injector {
         request.resultHandler = completion
         request.execute()
     }
+    
+    public func detailsFor(entry entryId: Int, completion: @escaping ((TimeEntryDetailsResult) -> Void)) {
+        let request = TimeEntryDetailsRequest(entryId: entryId, userId: userId)
+        inject(into: request)
+        request.resultHandler = completion
+        request.execute()
+    }
 }
