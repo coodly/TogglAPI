@@ -20,7 +20,7 @@ private let CurrentTimeEntryPath = "/time_entries/current"
 
 public enum CurrentTimeEntryResult {
     case current(TimeEntry)
-    case none
+    case noEntry
     case failure(TogglError)
 }
 
@@ -38,7 +38,7 @@ internal class CurrentTimeEntryRequest: NetworkRequest<TimeEntryDetailsResponse,
         if let entry = result.value?.data {
             self.result = .current(entry)
         } else if result.statusCode == 200 {
-            self.result = .none
+            self.result = .noEntry
         } else {
             self.result = .failure(result.error ?? .unknown)
         }
