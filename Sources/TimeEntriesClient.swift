@@ -72,4 +72,11 @@ public class TimeEntriesClient: Injector {
         request.resultHandler = completion
         request.execute()
     }
+    
+    public func running(completion: @escaping ((CurrentTimeEntryResult) -> Void)) {
+        let request = CurrentTimeEntryRequest(userId: userId)
+        inject(into: request)
+        request.resultHandler = completion
+        request.execute()
+    }
 }
