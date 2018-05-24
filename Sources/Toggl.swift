@@ -34,4 +34,11 @@ public class Toggl: Injector {
     public func entriesClient(userId: Int) -> TimeEntriesClient {
         return TimeEntriesClient(userId: userId)
     }
+    
+    public func listWorkspaces(for userId: Int, completion: @escaping ((ListWorkspacesResult) -> Void)) {
+        let request = ListWorkspacesRequest(userId: userId)
+        inject(into: request)
+        request.resultHandler = completion
+        request.execute()
+    }
 }
