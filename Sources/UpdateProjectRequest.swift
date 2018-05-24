@@ -16,21 +16,26 @@
 
 import Foundation
 
-private let CreateProjectPath = "/projects"
+public enum ProjectDetailsResult {
+    case success(Project)
+    case failure(TogglError)
+}
 
-internal class CreateProjectRequest: NetworkRequest<ProjectDetailsResponse, ProjectDetailsResult> {
-    private let workspaceId: Int
-    private let name: String
-    internal init(workspaceId: Int, name: String) {
-        self.workspaceId = workspaceId
-        self.name = name
+
+private let UpdateProjectPathBase = "/projects/%@"
+
+internal class UpdateProjectRequest: NetworkRequest<ProjectDetailsResponse, ProjectDetailsResult> {
+    private let id: Int
+    private let details: ProjectSendDetails
+    internal init(id: Int, details: ProjectSendDetails) {
+        self.id = id
+        self.details = details
     }
     
     override func performRequest() {
-        let projectData = ProjectSendDetails(wid: workspaceId, name: name)
-        let body = ProjectSendBody(project: projectData)
-        
-        POST(CreateProjectPath, body: body)
+        let path = String(format: UpdateProjectPathBase, NSNumber(value: id))
+        let body = ProjectSendBody(project: details)
+        PUT(path, body: body)
     }
     
     override func handle(result: NetworkResult<ProjectDetailsResponse>) {
@@ -42,6 +47,10 @@ internal class CreateProjectRequest: NetworkRequest<ProjectDetailsResponse, Proj
     }
     
     override func token() -> String {
-        return tokenStore.tokenFor(workspace: workspaceId)
+        return tokenStore.tokenFor(workspace: details.wid)
     }
+}
+
+internal struct ProjectDetailsResponse: Codable {
+    let data: Project
 }
