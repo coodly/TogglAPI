@@ -24,5 +24,6 @@ public struct TimeEntry: Codable {
     public let start: Date
     public let stop: Date?
     public let description: String?
+    public let tags: [String]?
     public let at: Date
 }
