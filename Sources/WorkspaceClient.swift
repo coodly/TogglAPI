@@ -43,8 +43,8 @@ public class WorkspaceClient: Injector {
         request.execute()
     }
     
-    public func createProject(name: String, completion: @escaping ((ProjectDetailsResult) -> Void)) {
-        let request = CreateProjectRequest(workspaceId: workspaceId, name: name)
+    public func createProject(details: ProjectSendDetails, completion: @escaping ((ProjectDetailsResult) -> Void)) {
+        let request = CreateProjectRequest(workspaceId: workspaceId, details: details)
         inject(into: request)
         request.resultHandler = completion
         request.execute()

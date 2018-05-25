@@ -20,16 +20,14 @@ private let CreateProjectPath = "/projects"
 
 internal class CreateProjectRequest: NetworkRequest<ProjectDetailsResponse, ProjectDetailsResult> {
     private let workspaceId: Int
-    private let name: String
-    internal init(workspaceId: Int, name: String) {
+    private let details: ProjectSendDetails
+    internal init(workspaceId: Int, details: ProjectSendDetails) {
         self.workspaceId = workspaceId
-        self.name = name
+        self.details = details
     }
     
     override func performRequest() {
-        let projectData = ProjectSendDetails(wid: workspaceId, name: name)
-        let body = ProjectSendBody(project: projectData)
-        
+        let body = ProjectSendBody(project: details)        
         POST(CreateProjectPath, body: body)
     }
     

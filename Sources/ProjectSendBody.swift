@@ -23,10 +23,11 @@ internal struct ProjectSendBody: Encodable {
 public struct ProjectSendDetails: Encodable {
     public let wid: Int
     public let name: String
+    public let active: Bool
 }
 
 public extension ProjectSendDetails {
-    public static func details(wid: Int, name: String) -> ProjectSendDetails {
-        return ProjectSendDetails(wid: wid, name: name)
+    public static func details(wid: Int, name: String, active: Bool) -> ProjectSendDetails {
+        return ProjectSendDetails(wid: wid, name: name, active: active)
     }
 }
