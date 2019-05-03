@@ -27,9 +27,9 @@ public struct ProjectSendDetails: Encodable {
     public let active: Bool
 }
 
-public extension ProjectSendDetails {
+extension ProjectSendDetails {
     public static func details(wid: Int, name: String, colorHEX: String, active: Bool) -> ProjectSendDetails {
-        let colorIndex = ColorCode.all.index(where: { $0.code == colorHEX }) ?? 0
+        let colorIndex = ColorCode.all.firstIndex(where: { $0.code == colorHEX }) ?? 0
         return ProjectSendDetails(wid: wid, name: name, color: String(describing: colorIndex), active: active)
     }
 }

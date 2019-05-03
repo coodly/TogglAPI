@@ -32,7 +32,7 @@ public struct TimeEntrySendDetails: Encodable {
     public let createdWith: String
 }
 
-public extension TimeEntrySendDetails {
+extension TimeEntrySendDetails {
     public static func details(wid: Int, pid: Int?, tid: Int?, description: String?, tags: [String]?, start: Date, stop: Date?, createdWith: String) -> TimeEntrySendDetails {
         let duration: Int?
         if let end = stop {
