@@ -15,9 +15,10 @@
  */
 
 public class Toggl: Injector {
-    public init(fetch: NetworkFetch, tokenStore: TokenStore) {
+    public init(userAgent: String, fetch: NetworkFetch, tokenStore: TokenStore) {
         Injection.sharedInstance.fetch = fetch
         Injection.sharedInstance.tokenStore = tokenStore
+        Injection.sharedInstance.userAgent = userAgent
     }
     
     public func passwordAuthentication(_ username: String, password: String, completion: @escaping ((LoginResult) -> Void)) {
@@ -33,6 +34,10 @@ public class Toggl: Injector {
     
     public func entriesClient(userId: Int) -> TimeEntriesClient {
         return TimeEntriesClient(userId: userId)
+    }
+    
+    public func reportsClient(workspaceId: Int) -> ReportsClient {
+        return ReportsClient(workspaceId: workspaceId)
     }
     
     public func listWorkspaces(for userId: Int, completion: @escaping ((ListWorkspacesResult) -> Void)) {

@@ -55,7 +55,7 @@ internal struct EmptyBody: Encodable {
     
 }
 
-private let ServerAPIV8URLString = "https://www.toggl.com/api/v8"
+private let ServerAPIV8URLString = "https://www.toggl.com"
 
 private typealias Dependencies = FetchConsumer & TokenConsumer
 
@@ -92,8 +92,8 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
     private lazy var dateFormatter = ISO8601DateFormatter()
     
     private let baseURL: URL
-    internal init(baseURL: URL = URL(string: ServerAPIV8URLString)!) {
-        self.baseURL = baseURL
+    internal init(baseURL: URL = URL(string: ServerAPIV8URLString)!, basePath: String = "api/v8") {
+        self.baseURL = baseURL.appendingPathComponent(basePath)
     }
     
     final func execute() {
@@ -153,6 +153,7 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
             }
             queryItems.append(URLQueryItem(name: key, value: encoded))
         }
+        queryItems.append(URLQueryItem(name: "user_agent", value: Injection.sharedInstance.userAgent))
         
         components.queryItems = queryItems
         

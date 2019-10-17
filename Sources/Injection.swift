@@ -31,6 +31,7 @@ internal class Injection {
     
     internal var fetch: NetworkFetch!
     internal var tokenStore: TokenStore!
+    internal var userAgent: String = ""
     
     fileprivate func inject(into: AnyObject) {
         if var consumer = into as? FetchConsumer {
