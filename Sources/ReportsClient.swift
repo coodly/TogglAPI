@@ -52,3 +52,13 @@ public class ReportsClient: Injector {
         request.execute()
     }
 }
+
+extension TimeEntriesReportPage {
+    public func reportsAsEntries(in workspace: Int) -> [TimeEntry] {
+        return entries.map() {
+            report in
+            
+            return TimeEntry(id: report.id, wid: workspace, pid: report.pid, tid: report.tid, start: report.start, stop: report.end, description: report.description, tags: report.tags, at: report.updated)
+        }
+    }
+}
