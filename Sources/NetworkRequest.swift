@@ -218,7 +218,7 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
             }
             
             do {
-                value = try self.decoder.decode(Model.self, from: data)
+                value = try self.modify(decoder: self.decoder).decode(Model.self, from: data)
             } catch {
                 togglError = .invalidJSON
             }
@@ -239,5 +239,9 @@ internal class NetworkRequest<Model: Codable, Result>: Dependencies {
     
     internal func token() -> String {
         return ""
+    }
+    
+    internal func modify(decoder: JSONDecoder) -> JSONDecoder {
+        decoder
     }
 }

@@ -22,10 +22,12 @@ internal class TimeEntriesReportPageRequest: NetworkRequest<TimeEntriesReportPag
     private let workspace: Int
     private let project: Int
     private let range: DateInterval
-    internal init(workspace: Int, project: Int, range: DateInterval) {
+    private let page: Int
+    internal init(workspace: Int, project: Int, range: DateInterval, page: Int) {
         self.workspace = workspace
         self.project = project
         self.range = range
+        self.page = page
         
         super.init(basePath: "reports/api/v2")
     }
@@ -35,7 +37,8 @@ internal class TimeEntriesReportPageRequest: NetworkRequest<TimeEntriesReportPag
             "workspace_id": .string(String(describing: workspace)),
             "project_ids": .string(String(describing: project)),
             "since": .date(range.start),
-            "until": .date(range.end)
+            "until": .date(range.end),
+            "page": .string(String(describing: page))
         ])
     }
     
@@ -49,5 +52,10 @@ internal class TimeEntriesReportPageRequest: NetworkRequest<TimeEntriesReportPag
     
     override func token() -> String {
         return tokenStore.tokenFor(workspace: workspace)
+    }
+    
+    override func modify(decoder: JSONDecoder) -> JSONDecoder {
+        decoder.userInfo = [.reportPage: page]
+        return decoder
     }
 }

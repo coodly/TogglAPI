@@ -16,16 +16,39 @@
 
 import Foundation
 
+extension CodingUserInfoKey {
+    internal static let reportPage = CodingUserInfoKey(rawValue: "report.page")!
+}
+
 public struct TimeEntriesReportPage: Codable {
     enum CodingKeys: String, CodingKey {
         case entries = "data"
         case totalCount
         case perPage
+        case currentPage
     }
     
     public let entries: [TimeEntryReport]
     let totalCount: Int
     let perPage: Int
+    let currentPage: Int
+    
+    public var hasMore: Bool {
+        let loaded = currentPage * perPage
+        return totalCount > loaded
+    }
+    public var nextPage: Int {
+        currentPage + 1
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        
+        entries = try values.decode([TimeEntryReport].self, forKey: .entries)
+        totalCount = try values.decode(Int.self, forKey: .totalCount)
+        perPage = try values.decode(Int.self, forKey: .perPage)
+        currentPage = decoder.userInfo[.reportPage] as! Int
+    }
 }
 
 public struct TimeEntryReport: Codable {
@@ -45,8 +68,8 @@ public class ReportsClient: Injector {
         self.workspaceId = workspaceId
     }
     
-    public func loadEntries(for projectId: Int, in range: DateInterval, completion: @escaping ((Result<TimeEntriesReportPage, Error>) -> Void)) {
-        let request = TimeEntriesReportPageRequest(workspace: workspaceId, project: projectId, range: range)
+    public func loadEntries(for projectId: Int, in range: DateInterval, page: Int = 1, completion: @escaping ((Result<TimeEntriesReportPage, Error>) -> Void)) {
+        let request = TimeEntriesReportPageRequest(workspace: workspaceId, project: projectId, range: range, page: page)
         inject(into: request)
         request.resultHandler = completion
         request.execute()
