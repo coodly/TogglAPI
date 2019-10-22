@@ -63,6 +63,13 @@ public struct TimeEntryReport: Codable {
 }
 
 public class ReportsClient: Injector {
+    private static let queue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.qualityOfService = .utility
+        queue.maxConcurrentOperationCount = 1
+        return queue
+    }()
+    
     private let workspaceId: Int
     internal init(workspaceId: Int) {
         self.workspaceId = workspaceId
@@ -72,7 +79,15 @@ public class ReportsClient: Injector {
         let request = TimeEntriesReportPageRequest(workspace: workspaceId, project: projectId, range: range, page: page)
         inject(into: request)
         request.resultHandler = completion
-        request.execute()
+        execute(request)
+    }
+    
+    private func execute<Model: Codable, Result>(_ request: NetworkRequest<Model, Result>) {
+        let run = ExecuteRequestOperation(request: request)
+        let delay = DelayOperation()
+        delay.addDependency(run)
+        
+        ReportsClient.queue.addOperations([run, delay], waitUntilFinished: false)
     }
 }
 
@@ -82,6 +97,33 @@ extension TimeEntriesReportPage {
             report in
             
             return TimeEntry(id: report.id, wid: workspace, pid: report.pid, tid: report.tid, start: report.start, stop: report.end, description: report.description, tags: report.tags, at: report.updated)
+        }
+    }
+}
+
+
+private class ExecuteRequestOperation<Model: Codable, Result>: ConcurrentOperation {
+    private let request: NetworkRequest<Model, Result>
+    internal init(request: NetworkRequest<Model, Result>) {
+        self.request = request
+    }
+    
+    override func main() {
+        let original = request.resultHandler
+        request.resultHandler = {
+            result in
+            
+            original?(result)
+            self.finish()
+        }
+        request.execute()
+    }
+}
+
+private class DelayOperation: ConcurrentOperation {
+    override func main() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+            self.finish()
         }
     }
 }
