@@ -76,12 +76,20 @@ public class ReportsClient: Injector {
     }
     
     public func loadEntries(for projectId: Int, in range: DateInterval, page: Int = 1, completion: @escaping ((Result<TimeEntriesReportPage, Error>) -> Void)) {
-        let request = TimeEntriesReportPageRequest(workspace: workspaceId, project: projectId, range: range, page: page)
+        loadEntries(for: [projectId], in: range, page: page, completion: completion)
+    }
+
+    public func loadEntries(in range: DateInterval, page: Int = 1, completion: @escaping ((Result<TimeEntriesReportPage, Error>) -> Void)) {
+        loadEntries(for: [], in: range, page: page, completion: completion)
+    }
+
+    public func loadEntries(for projectsIds: [Int], in range: DateInterval, page: Int = 1, completion: @escaping ((Result<TimeEntriesReportPage, Error>) -> Void)) {
+        let request = TimeEntriesReportPageRequest(workspace: workspaceId, projectIds: projectsIds, range: range, page: page)
         inject(into: request)
         request.resultHandler = completion
         execute(request)
     }
-    
+
     private func execute<Model: Codable, Result>(_ request: NetworkRequest<Model, Result>) {
         let run = ExecuteRequestOperation(request: request)
         let delay = DelayOperation()

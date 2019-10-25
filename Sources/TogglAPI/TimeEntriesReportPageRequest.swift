@@ -20,12 +20,12 @@ private let ReportsRequestBase = "/details"
 
 internal class TimeEntriesReportPageRequest: NetworkRequest<TimeEntriesReportPage, Result<TimeEntriesReportPage, Error>> {
     private let workspace: Int
-    private let project: Int
+    private let projectIds: [Int]
     private let range: DateInterval
     private let page: Int
-    internal init(workspace: Int, project: Int, range: DateInterval, page: Int) {
+    internal init(workspace: Int, projectIds: [Int], range: DateInterval, page: Int) {
         self.workspace = workspace
-        self.project = project
+        self.projectIds = projectIds
         self.range = range
         self.page = page
         
@@ -33,13 +33,17 @@ internal class TimeEntriesReportPageRequest: NetworkRequest<TimeEntriesReportPag
     }
     
     override func performRequest() {
-        GET(ReportsRequestBase, params: [
+        var params: [String: ParameterValue] = [
             "workspace_id": .string(String(describing: workspace)),
-            "project_ids": .string(String(describing: project)),
             "since": .date(range.start),
             "until": .date(range.end),
             "page": .string(String(describing: page))
-        ])
+        ]
+        if projectIds.count > 0 {
+            let idsString = projectIds.map({ String(describing: $0) }).joined(separator: ",")
+            params["project_ids"] = .string(idsString)
+        }
+        GET(ReportsRequestBase, params: params)
     }
     
     override func handle(result: NetworkResult<TimeEntriesReportPage>) {
