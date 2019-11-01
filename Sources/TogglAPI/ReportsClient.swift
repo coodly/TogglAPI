@@ -62,6 +62,11 @@ public struct TimeEntryReport: Codable {
     public let updated: Date
 }
 
+public enum TimeEntriesOrder {
+    case asc
+    case desc
+}
+
 public class ReportsClient: Injector {
     private static let queue: OperationQueue = {
         let queue = OperationQueue()
@@ -75,16 +80,16 @@ public class ReportsClient: Injector {
         self.workspaceId = workspaceId
     }
     
-    public func loadEntries(for projectId: Int, in range: DateInterval, page: Int = 1, completion: @escaping ((Result<TimeEntriesReportPage, Error>) -> Void)) {
-        loadEntries(for: [projectId], in: range, page: page, completion: completion)
+    public func loadEntries(for projectId: Int, in range: DateInterval, page: Int = 1, order: TimeEntriesOrder = .desc, completion: @escaping ((Result<TimeEntriesReportPage, Error>) -> Void)) {
+        loadEntries(for: [projectId], in: range, page: page, order: order, completion: completion)
     }
 
-    public func loadEntries(in range: DateInterval, page: Int = 1, completion: @escaping ((Result<TimeEntriesReportPage, Error>) -> Void)) {
-        loadEntries(for: [], in: range, page: page, completion: completion)
+    public func loadEntries(in range: DateInterval, page: Int = 1, order: TimeEntriesOrder = .desc, completion: @escaping ((Result<TimeEntriesReportPage, Error>) -> Void)) {
+        loadEntries(for: [], in: range, page: page, order: order, completion: completion)
     }
 
-    public func loadEntries(for projectsIds: [Int], in range: DateInterval, page: Int = 1, completion: @escaping ((Result<TimeEntriesReportPage, Error>) -> Void)) {
-        let request = TimeEntriesReportPageRequest(workspace: workspaceId, projectIds: projectsIds, range: range, page: page)
+    public func loadEntries(for projectsIds: [Int], in range: DateInterval, page: Int = 1, order: TimeEntriesOrder = .desc, completion: @escaping ((Result<TimeEntriesReportPage, Error>) -> Void)) {
+        let request = TimeEntriesReportPageRequest(workspace: workspaceId, projectIds: projectsIds, range: range, page: page, order: order)
         inject(into: request)
         request.resultHandler = completion
         execute(request)

@@ -23,11 +23,13 @@ internal class TimeEntriesReportPageRequest: NetworkRequest<TimeEntriesReportPag
     private let projectIds: [Int]
     private let range: DateInterval
     private let page: Int
-    internal init(workspace: Int, projectIds: [Int], range: DateInterval, page: Int) {
+    private let order: TimeEntriesOrder
+    internal init(workspace: Int, projectIds: [Int], range: DateInterval, page: Int, order: TimeEntriesOrder) {
         self.workspace = workspace
         self.projectIds = projectIds
         self.range = range
         self.page = page
+        self.order = order
         
         super.init(basePath: "reports/api/v2")
     }
@@ -37,7 +39,9 @@ internal class TimeEntriesReportPageRequest: NetworkRequest<TimeEntriesReportPag
             "workspace_id": .string(String(describing: workspace)),
             "since": .date(range.start),
             "until": .date(range.end),
-            "page": .string(String(describing: page))
+            "page": .string(String(describing: page)),
+            "order_field": .string("date"),
+            "order_desc": .string(order == .desc ? "on" : "off")
         ]
         if projectIds.count > 0 {
             let idsString = projectIds.map({ String(describing: $0) }).joined(separator: ",")
