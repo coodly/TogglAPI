@@ -124,10 +124,12 @@ private class ExecuteRequestOperation<Model: Codable, Result>: ConcurrentOperati
     override func main() {
         let original = request.resultHandler
         request.resultHandler = {
+            [weak self]
+            
             result in
             
             original?(result)
-            self.finish()
+            self?.finish()
         }
         request.execute()
     }
