@@ -53,7 +53,7 @@ public struct TimeEntriesReportPage: Codable {
 
 public struct TimeEntryReport: Codable {
     public let id: Int
-    public let pid: Int
+    public let pid: Int?
     public let tid: Int?
     public let start: Date
     public let end: Date?
