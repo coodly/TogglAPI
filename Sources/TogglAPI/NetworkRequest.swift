@@ -55,7 +55,7 @@ internal struct EmptyBody: Encodable {
     
 }
 
-private let ServerAPIV8URLString = "https://www.toggl.com"
+private let ServerAPIV8URLString = "https://api.track.toggl.com"
 
 private typealias Dependencies = FetchConsumer & TokenConsumer
 
